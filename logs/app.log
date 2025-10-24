@@ -1,0 +1,122 @@
+2025-10-24 20:33:40.051 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.3.Final
+2025-10-24 20:33:40.107 [main] INFO  dev.adrian.FunkoApplication - Starting FunkoApplication using Java 25 with PID 18496 (C:\Users\USUARIO\Desktop\Funko\build\classes\java\main started by USUARIO in C:\Users\USUARIO\Desktop\Funko)
+2025-10-24 20:33:40.107 [main] DEBUG dev.adrian.FunkoApplication - Running with Spring Boot v3.5.6, Spring v6.2.11
+2025-10-24 20:33:40.108 [main] INFO  dev.adrian.FunkoApplication - The following 1 profile is active: "dev"
+2025-10-24 20:33:41.011 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-10-24 20:33:41.069 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 48 ms. Found 2 JPA repository interfaces.
+2025-10-24 20:33:41.716 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 6969 (http)
+2025-10-24 20:33:41.731 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-6969"]
+2025-10-24 20:33:41.732 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-10-24 20:33:41.732 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.46]
+2025-10-24 20:33:41.791 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-10-24 20:33:41.795 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1648 ms
+2025-10-24 20:33:42.009 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-10-24 20:33:42.061 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.29.Final
+2025-10-24 20:33:42.090 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-10-24 20:33:42.323 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-10-24 20:33:42.344 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-10-24 20:33:42.481 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:funkodb user=SA
+2025-10-24 20:33:42.482 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-10-24 20:33:42.506 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-10-24 20:33:42.521 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 2.3.232
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-10-24 20:33:43.156 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-10-24 20:33:43.205 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-10-24 20:33:43.492 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-10-24 20:33:43.830 [main] INFO  o.s.b.a.h.H2ConsoleAutoConfiguration - H2 console available at '/h2-console'. Database available at 'jdbc:h2:mem:funkodb'
+2025-10-24 20:33:43.843 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint beneath base path '/actuator'
+2025-10-24 20:33:43.883 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-6969"]
+2025-10-24 20:33:43.892 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 6969 (http) with context path '/'
+2025-10-24 20:33:43.899 [main] INFO  dev.adrian.FunkoApplication - Started FunkoApplication in 4.402 seconds (process running for 4.982)
+2025-10-24 20:33:44.423 [RMI TCP Connection(4)-192.168.16.114] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-10-24 20:33:44.423 [RMI TCP Connection(4)-192.168.16.114] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-10-24 20:33:44.424 [RMI TCP Connection(4)-192.168.16.114] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-10-24 20:33:50.433 [http-nio-6969-exec-1] INFO  d.a.Funko.service.FunkoServiceImpl - findAll - Recuperando todos los Funkos...
+2025-10-24 20:33:50.438 [http-nio-6969-exec-1] INFO  d.a.Funko.service.FunkoServiceImpl - findAll - Total de Funkos encontrados: 0
+2025-10-24 20:33:56.051 [http-nio-6969-exec-3] INFO  d.a.Funko.service.FunkoServiceImpl - saveFromDTO - Creando Funko desde DTO: Vegeta SSJ
+2025-10-24 20:33:56.054 [http-nio-6969-exec-3] INFO  d.a.Funko.service.FunkoServiceImpl - saveFromDTO - Categoría encontrada: ANIME
+2025-10-24 20:33:56.054 [http-nio-6969-exec-3] INFO  d.a.Funko.service.FunkoServiceImpl - saveFromDTO - Validación completada para Funko: Vegeta SSJ
+2025-10-24 20:33:56.057 [http-nio-6969-exec-3] INFO  d.a.Funko.service.FunkoServiceImpl - saveFromDTO - Funko guardado con ID: 1
+2025-10-24 20:34:03.046 [http-nio-6969-exec-4] INFO  d.a.Funko.service.FunkoServiceImpl - saveFromDTO - Creando Funko desde DTO: Vegeta SSJ
+2025-10-24 20:34:03.047 [http-nio-6969-exec-4] INFO  d.a.Funko.service.FunkoServiceImpl - saveFromDTO - Categoría encontrada: ANIME
+2025-10-24 20:34:03.047 [http-nio-6969-exec-4] INFO  d.a.Funko.service.FunkoServiceImpl - saveFromDTO - Validación completada para Funko: Vegeta SSJ
+2025-10-24 20:34:03.048 [http-nio-6969-exec-4] INFO  d.a.Funko.service.FunkoServiceImpl - saveFromDTO - Funko guardado con ID: 2
+2025-10-24 20:34:06.470 [http-nio-6969-exec-5] INFO  d.a.Funko.service.FunkoServiceImpl - findAll - Recuperando todos los Funkos...
+2025-10-24 20:34:06.479 [http-nio-6969-exec-5] INFO  d.a.Funko.service.FunkoServiceImpl - findAll - Total de Funkos encontrados: 2
+2025-10-24 20:34:10.619 [http-nio-6969-exec-6] INFO  d.a.Funko.service.FunkoServiceImpl - findAll - Recuperando todos los Funkos...
+2025-10-24 20:34:10.623 [http-nio-6969-exec-6] INFO  d.a.Funko.service.FunkoServiceImpl - findAll - Total de Funkos encontrados: 2
+2025-10-24 20:34:11.448 [http-nio-6969-exec-7] INFO  d.a.Funko.service.FunkoServiceImpl - findAll - Recuperando todos los Funkos...
+2025-10-24 20:34:11.450 [http-nio-6969-exec-7] INFO  d.a.Funko.service.FunkoServiceImpl - findAll - Total de Funkos encontrados: 2
+2025-10-24 20:34:12.288 [http-nio-6969-exec-8] INFO  d.a.Funko.service.FunkoServiceImpl - findAll - Recuperando todos los Funkos...
+2025-10-24 20:34:12.291 [http-nio-6969-exec-8] INFO  d.a.Funko.service.FunkoServiceImpl - findAll - Total de Funkos encontrados: 2
+2025-10-24 20:34:12.898 [http-nio-6969-exec-10] INFO  d.a.Funko.service.FunkoServiceImpl - findAll - Recuperando todos los Funkos...
+2025-10-24 20:34:12.900 [http-nio-6969-exec-10] INFO  d.a.Funko.service.FunkoServiceImpl - findAll - Total de Funkos encontrados: 2
+2025-10-24 20:34:13.257 [http-nio-6969-exec-9] INFO  d.a.Funko.service.FunkoServiceImpl - findAll - Recuperando todos los Funkos...
+2025-10-24 20:34:13.260 [http-nio-6969-exec-9] INFO  d.a.Funko.service.FunkoServiceImpl - findAll - Total de Funkos encontrados: 2
+2025-10-24 20:34:13.835 [http-nio-6969-exec-2] INFO  d.a.Funko.service.FunkoServiceImpl - findAll - Recuperando todos los Funkos...
+2025-10-24 20:34:13.838 [http-nio-6969-exec-2] INFO  d.a.Funko.service.FunkoServiceImpl - findAll - Total de Funkos encontrados: 2
+2025-10-24 20:34:15.163 [http-nio-6969-exec-1] INFO  d.a.Funko.service.FunkoServiceImpl - findAll - Recuperando todos los Funkos...
+2025-10-24 20:34:15.168 [http-nio-6969-exec-1] INFO  d.a.Funko.service.FunkoServiceImpl - findAll - Total de Funkos encontrados: 2
+2025-10-24 20:35:28.361 [http-nio-6969-exec-5] INFO  d.a.Funko.service.FunkoServiceImpl - findAll - Recuperando todos los Funkos...
+2025-10-24 20:35:28.363 [http-nio-6969-exec-5] INFO  d.a.Funko.service.FunkoServiceImpl - findAll - Total de Funkos encontrados: 2
+2025-10-24 20:35:36.484 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-10-24 20:35:36.487 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-10-24 20:35:36.491 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-10-24 20:35:36.492 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-10-24 20:35:36.493 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-10-24 20:35:38.198 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.3.Final
+2025-10-24 20:35:38.227 [main] INFO  dev.adrian.FunkoApplication - Starting FunkoApplication using Java 25 with PID 9828 (C:\Users\USUARIO\Desktop\Funko\build\classes\java\main started by USUARIO in C:\Users\USUARIO\Desktop\Funko)
+2025-10-24 20:35:38.227 [main] DEBUG dev.adrian.FunkoApplication - Running with Spring Boot v3.5.6, Spring v6.2.11
+2025-10-24 20:35:38.228 [main] INFO  dev.adrian.FunkoApplication - The following 1 profile is active: "dev"
+2025-10-24 20:35:38.855 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-10-24 20:35:38.893 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 32 ms. Found 2 JPA repository interfaces.
+2025-10-24 20:35:39.208 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 6969 (http)
+2025-10-24 20:35:39.215 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-6969"]
+2025-10-24 20:35:39.216 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-10-24 20:35:39.217 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.46]
+2025-10-24 20:35:39.249 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-10-24 20:35:39.249 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 988 ms
+2025-10-24 20:35:39.394 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-10-24 20:35:39.425 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.29.Final
+2025-10-24 20:35:39.447 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-10-24 20:35:39.621 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-10-24 20:35:39.640 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-10-24 20:35:39.754 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:funkodb user=SA
+2025-10-24 20:35:39.755 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-10-24 20:35:39.768 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-10-24 20:35:39.780 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 2.3.232
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-10-24 20:35:40.369 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-10-24 20:35:40.413 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-10-24 20:35:40.662 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-10-24 20:35:40.981 [main] INFO  o.s.b.a.h.H2ConsoleAutoConfiguration - H2 console available at '/h2-console'. Database available at 'jdbc:h2:mem:funkodb'
+2025-10-24 20:35:40.995 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint beneath base path '/actuator'
+2025-10-24 20:35:41.035 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-6969"]
+2025-10-24 20:35:41.044 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 6969 (http) with context path '/'
+2025-10-24 20:35:41.051 [main] INFO  dev.adrian.FunkoApplication - Started FunkoApplication in 3.206 seconds (process running for 3.533)
+2025-10-24 20:35:41.689 [RMI TCP Connection(2)-192.168.16.114] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-10-24 20:35:41.689 [RMI TCP Connection(2)-192.168.16.114] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-10-24 20:35:41.690 [RMI TCP Connection(2)-192.168.16.114] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-10-24 20:35:43.740 [http-nio-6969-exec-1] INFO  d.a.Funko.service.FunkoServiceImpl - saveFromDTO - Creando Funko desde DTO: Vegeta SSJ
+2025-10-24 20:35:43.743 [http-nio-6969-exec-1] INFO  d.a.Funko.service.FunkoServiceImpl - saveFromDTO - Categoría encontrada: ANIME
+2025-10-24 20:35:43.743 [http-nio-6969-exec-1] INFO  d.a.Funko.service.FunkoServiceImpl - saveFromDTO - Validación completada para Funko: Vegeta SSJ
+2025-10-24 20:35:43.749 [http-nio-6969-exec-1] INFO  d.a.Funko.service.FunkoServiceImpl - saveFromDTO - Funko guardado con ID: 1
+2025-10-24 20:35:47.299 [http-nio-6969-exec-4] INFO  d.a.Funko.service.FunkoServiceImpl - findAll - Recuperando todos los Funkos...
+2025-10-24 20:35:47.309 [http-nio-6969-exec-4] INFO  d.a.Funko.service.FunkoServiceImpl - findAll - Total de Funkos encontrados: 1
+2025-10-24 20:36:27.988 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-10-24 20:36:27.991 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-10-24 20:36:27.994 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-10-24 20:36:27.996 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-10-24 20:36:27.997 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
