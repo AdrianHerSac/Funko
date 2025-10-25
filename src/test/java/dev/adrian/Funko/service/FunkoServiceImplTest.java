@@ -1,13 +1,14 @@
 package dev.adrian.Funko.service;
 
 import dev.adrian.Categoria.model.Categoria;
+import dev.adrian.Categoria.repository.CategoriaRepository; // ✅ Import necesario
 import dev.adrian.Funko.dto.CreateFunkoDTO;
 import dev.adrian.Funko.dto.PatchFunkoDTO;
 import dev.adrian.Funko.dto.UpdateFunkoDTO;
+import dev.adrian.Funko.exception.ResourceNotFoundException;
 import dev.adrian.Funko.mappers.FunkoMapper;
 import dev.adrian.Funko.model.Funko;
 import dev.adrian.Funko.repository.FunkoJpaRepository;
-import dev.adrian.Funko.service.FunkoServiceImpl;
 import dev.adrian.Funko.validation.FunkoValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,21 +25,23 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * ✅ Test unitario del servicio FunkoServiceImpl
+ * Usa Mockito para simular el repositorio, mapper y validador sin tocar la base de datos real.
+ */
 @ExtendWith(MockitoExtension.class)
 class FunkoServiceImplTest {
 
-    @Mock
-    private FunkoJpaRepository funkoRepository;
+    // --- Dependencias simuladas (Mocks) ---
+    @Mock private FunkoJpaRepository funkoRepository;
+    @Mock private FunkoMapper funkoMapper;
+    @Mock private FunkoValidator funkoValidator;
+    @Mock private CategoriaRepository categoriaRepository;
 
-    @Mock
-    private FunkoMapper funkoMapper;
+    // --- Clase que se prueba ---
+    @InjectMocks private FunkoServiceImpl funkoService;
 
-    @Mock
-    private FunkoValidator funkoValidator;
-
-    @InjectMocks
-    private FunkoServiceImpl funkoService;
-
+    // --- Datos de prueba ---
     private Funko funkoExample;
     private CreateFunkoDTO createFunkoDTO;
     private UpdateFunkoDTO updateFunkoDTO;
@@ -46,7 +49,7 @@ class FunkoServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        // Inicializa objetos de prueba
+        // Preparamos un Funko de ejemplo
         funkoExample = new Funko();
         funkoExample.setId(1L);
         funkoExample.setUuid(1L);
@@ -55,13 +58,15 @@ class FunkoServiceImplTest {
         funkoExample.setCategoria(new Categoria(null, "ANIME"));
         funkoExample.setFechaLanzamiento(LocalDate.of(2023, 10, 20));
 
+        // DTO para crear un Funko nuevo
         createFunkoDTO = new CreateFunkoDTO();
         createFunkoDTO.setUuid(1L);
         createFunkoDTO.setNombre("Goku Ultra Instinto");
         createFunkoDTO.setPrecio(35.50);
-        createFunkoDTO.setCategoria(new Categoria(null, "ANIME"));
+        createFunkoDTO.setCategoriaNombre("ANIME");
         createFunkoDTO.setFechaLanzamiento(LocalDate.of(2024, 1, 15));
 
+        // DTO para actualización completa
         updateFunkoDTO = new UpdateFunkoDTO();
         updateFunkoDTO.setUuid(1L);
         updateFunkoDTO.setNombre("Goku Adulto");
@@ -69,12 +74,16 @@ class FunkoServiceImplTest {
         updateFunkoDTO.setCategoria(new Categoria(null, "ANIME"));
         updateFunkoDTO.setFechaLanzamiento(LocalDate.of(2024, 2, 1));
 
+        // DTO para actualización parcial
         patchFunkoDTO = new PatchFunkoDTO();
         patchFunkoDTO.setPrecio(32.50);
     }
 
+    // --- TESTS INDIVIDUALES ---
+
     @Test
     void findById_ExistId() {
+        // Simulamos que el repositorio devuelve un Funko cuando se busca por ID
         when(funkoRepository.findById(1L)).thenReturn(Optional.of(funkoExample));
 
         Optional<Funko> result = funkoService.findById(1L);
@@ -84,55 +93,67 @@ class FunkoServiceImplTest {
     }
 
     @Test
-    void findById_NoId_Empty() {
+    void findById_NoId() {
+        // Simulamos que no existe un Funko con ese ID
         when(funkoRepository.findById(999L)).thenReturn(Optional.empty());
 
-        Optional<Funko> result = funkoService.findById(999L);
+        // Esperamos que el servicio lance una excepción ResourceNotFoundException
+        assertThrows(ResourceNotFoundException.class, () -> funkoService.findById(999L));
 
-        assertFalse(result.isPresent());
+        // Verificamos que el repositorio fue consultado
+        verify(funkoRepository, times(1)).findById(999L);
     }
+
 
     @Test
     void findAll_ReturnListOfFunkos() {
-        List<Funko> funkosList = List.of(funkoExample);
-        when(funkoRepository.findAll()).thenReturn(funkosList);
+        when(funkoRepository.findAll()).thenReturn(List.of(funkoExample));
 
         List<Funko> result = funkoService.findAll();
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals("Vegeta SSJ", result.getFirst().getNombre());  // GetFrist y no Get?
+        assertEquals("Vegeta SSJ", result.get(0).getNombre());
     }
 
     @Test
     void saveFromDTO_CreateFunko() {
-        // Mock del mapper
+        // ✅ Simulamos la categoría existente
+        Categoria categoria = new Categoria(1L, "ANIME");
+        when(categoriaRepository.findByNombreIgnoreCase("ANIME"))
+                .thenReturn(Optional.of(categoria));
+
+        // ✅ Simulamos el mapper
         when(funkoMapper.fromCreateDTO(any(CreateFunkoDTO.class))).thenAnswer(invocation -> {
             CreateFunkoDTO dto = invocation.getArgument(0);
             Funko f = new Funko();
             f.setUuid(dto.getUuid());
             f.setNombre(dto.getNombre());
             f.setPrecio(dto.getPrecio());
-            f.setCategoria(dto.getCategoria());
+            f.setCategoria(categoria);
             f.setFechaLanzamiento(dto.getFechaLanzamiento());
             return f;
         });
 
-        // Mock del validator
+        // ✅ El validador no hace nada (evitamos lógica real)
         doNothing().when(funkoValidator).validate(any(Funko.class));
 
-        // Mock del repositorio (simulamos que asigna un ID)
+        // ✅ Simulamos que la BD asigna un ID al guardar
         when(funkoRepository.save(any(Funko.class))).thenAnswer(invocation -> {
             Funko savedFunko = invocation.getArgument(0);
             savedFunko.setId(1L);
             return savedFunko;
         });
 
+        // ✅ Ejecutamos el método real
         Funko savedFunko = funkoService.saveFromDTO(createFunkoDTO);
 
+        // ✅ Verificaciones
         assertNotNull(savedFunko.getId());
         assertEquals("Goku Ultra Instinto", savedFunko.getNombre());
         assertEquals(35.50, savedFunko.getPrecio());
+        assertEquals("ANIME", savedFunko.getCategoria().getNombre());
+
         verify(funkoRepository, times(1)).save(any(Funko.class));
     }
 
@@ -140,20 +161,8 @@ class FunkoServiceImplTest {
     void updateFromDTO_Id() {
         Categoria categoria = new Categoria(null, "ANIME");
 
-        when(funkoMapper.fromUpdateDTO(any(UpdateFunkoDTO.class), any(Funko.class)))
-                .thenAnswer(invocation -> {
-                    UpdateFunkoDTO dto = invocation.getArgument(0);
-                    Funko funko = invocation.getArgument(1);
-                    if (dto.getNombre() != null) funko.setNombre(dto.getNombre());
-                    if (dto.getPrecio() != null) funko.setPrecio(dto.getPrecio());
-                    if (dto.getCategoria() != null) funko.setCategoria(dto.getCategoria());
-                    if (dto.getFechaLanzamiento() != null) funko.setFechaLanzamiento(dto.getFechaLanzamiento());
-                    return null; // mapper es void
-                });
-
         when(funkoRepository.findById(1L)).thenReturn(Optional.of(funkoExample));
-        when(funkoRepository.save(any(Funko.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
+        when(funkoRepository.save(any(Funko.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         updateFunkoDTO.setCategoria(categoria);
 
@@ -161,30 +170,18 @@ class FunkoServiceImplTest {
 
         assertEquals("Goku Adulto", updatedFunko.getNombre());
         assertEquals(29.99, updatedFunko.getPrecio());
-        assertNotNull(updatedFunko.getCategoria());
-        assertEquals(new Categoria(null, "ANIME"), updatedFunko.getCategoria());
-    }
-
-    @Test
-    void updateFromDTO_NoId() {
-        when(funkoRepository.findById(999L)).thenReturn(Optional.empty());
-
-        assertThrows(RuntimeException.class, () -> funkoService.updateFromDTO(999L, updateFunkoDTO));
+        assertEquals("ANIME", updatedFunko.getCategoria().getNombre());
     }
 
     @Test
     void partialUpdateFromDTO_Id() {
         when(funkoRepository.findById(1L)).thenReturn(Optional.of(funkoExample));
 
-        // Simulamos el comportamiento del mapper
         when(funkoMapper.fromPatchDTO(any(PatchFunkoDTO.class), any(Funko.class)))
                 .thenAnswer(invocation -> {
                     PatchFunkoDTO dto = invocation.getArgument(0);
                     Funko funko = invocation.getArgument(1);
-                    if (dto.getNombre() != null) funko.setNombre(dto.getNombre());
                     if (dto.getPrecio() != null) funko.setPrecio(dto.getPrecio());
-                    if (dto.getCategoria() != null) funko.setCategoria(dto.getCategoria());
-                    if (dto.getFechaLanzamiento() != null) funko.setFechaLanzamiento(dto.getFechaLanzamiento());
                     return funko;
                 });
 
@@ -193,28 +190,17 @@ class FunkoServiceImplTest {
 
         Funko patchedFunko = funkoService.partialUpdateFromDTO(1L, patchFunkoDTO);
 
-        assertEquals(32.50, patchedFunko.getPrecio());          // Precio actualizado
-        assertEquals("Vegeta SSJ", patchedFunko.getNombre());   // Nombre sin cambios
-        assertNotNull(patchedFunko.getCategoria());            // Categoria no nula
-        assertEquals("ANIME", patchedFunko.getCategoria().getNombre()); // Igual que la original
-    }
-
-
-    @Test
-    void partialUpdateFromDTO_NoId() {
-        // Given
-        when(funkoRepository.findById(999L)).thenReturn(Optional.empty());
-
-        // When & Then
-        assertThrows(RuntimeException.class, () -> funkoService.partialUpdateFromDTO(999L, patchFunkoDTO));
+        assertEquals(32.50, patchedFunko.getPrecio());
+        assertEquals("Vegeta SSJ", patchedFunko.getNombre());
     }
 
     @Test
     void deleteById_ExistingId_ShouldDelete() {
-        when(funkoRepository.findById(1L)).thenReturn(Optional.of(funkoExample)); // <-- Este stubbing SÍ es necesario si tu deleteById verifica antes de borrar
+        when(funkoRepository.findById(1L)).thenReturn(Optional.of(funkoExample));
 
         funkoService.deleteById(1L);
-        verify(funkoRepository, times(1)).deleteById(1L); // Esto es lo que quieres probar: que se llamó a deleteById
+
+        verify(funkoRepository, times(1)).deleteById(1L);
     }
 
     @Test

@@ -12,7 +12,6 @@ import dev.adrian.Funko.repository.FunkoJpaRepository;
 import dev.adrian.Funko.validation.FunkoValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -72,7 +71,7 @@ public class FunkoServiceImpl implements FunkoService {
 
         log.info("saveFromDTO - Categoría encontrada: {}", categoria.getNombre());
 
-        Funko funko = funkoMapper.fromCreateDTO(dto, categoria);
+        Funko funko = funkoMapper.fromCreateDTO(dto);
 
         funkoValidator.validate(funko);
         log.info("saveFromDTO - Validación completada para Funko: {}", funko.getNombre());

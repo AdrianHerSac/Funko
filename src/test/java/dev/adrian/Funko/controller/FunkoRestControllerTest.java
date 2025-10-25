@@ -66,7 +66,7 @@ public class FunkoRestControllerTest {
         createFunkoDTO = new CreateFunkoDTO();
         createFunkoDTO.setNombre("Goku Ultra Instinto");
         createFunkoDTO.setPrecio(35.50);
-        createFunkoDTO.setCategoria(new Categoria(null, "PELICULA"));
+        createFunkoDTO.setCategoriaNombre("PELICULA");
         createFunkoDTO.setFechaLanzamiento(LocalDate.of(2024, 1, 15));
 
         updateFunkoDTO = new UpdateFunkoDTO();
@@ -122,19 +122,34 @@ public class FunkoRestControllerTest {
 
     @Test
     void createFunkoValido() throws Exception {
+        // Mock del servicio
         when(funkoService.saveFromDTO(any(CreateFunkoDTO.class))).thenReturn(funkoExample);
 
+        // Mock del mapper usando el builder
+        when(funkoMapper.toResponseDTO(any(Funko.class))).thenAnswer(invocation -> {
+            Funko funko = invocation.getArgument(0);
+            return FunkoResponseDTO.builder()
+                    .id(funko.getId())
+                    .uuid(funko.getUuid())
+                    .nombre(funko.getNombre())
+                    .precio(funko.getPrecio())
+                    .categoriaNombre(funko.getCategoria().getNombre())
+                    .fechaLanzamiento(funko.getFechaLanzamiento())
+                    .build();
+        });
+
+        // MockMvc request
         mockMvc.perform(MockMvcRequestBuilders.post("/funkos")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                    {
-                      "uuid": 2,
-                      "nombre": "Goku Ultra Instinto",
-                      "precio": 35.5,
-                      "categoria": { "nombre": "ANIME" },
-                      "fechaLanzamiento": "2024-01-15"
-                    }
-                    """))
+                        {
+                          "uuid": 2,
+                          "nombre": "Goku Ultra Instinto",
+                          "precio": 35.5,
+                          "categoriaNombre": "ANIME",
+                          "fechaLanzamiento": "2024-01-15"
+                        }
+                        """))
                 .andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.nombre").value("Vegeta SSJ"));
     }

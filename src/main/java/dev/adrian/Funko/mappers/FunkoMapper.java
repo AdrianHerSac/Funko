@@ -5,7 +5,6 @@ import dev.adrian.Categoria.repository.CategoriaRepository;
 import dev.adrian.Funko.dto.CreateFunkoDTO;
 import dev.adrian.Funko.dto.UpdateFunkoDTO;
 import dev.adrian.Funko.dto.PatchFunkoDTO;
-import dev.adrian.Funko.exception.ResourceNotFoundException;
 import dev.adrian.Funko.model.Funko;
 import dev.adrian.Funko.dto.FunkoResponseDTO;
 import org.springframework.stereotype.Component;
@@ -22,7 +21,8 @@ public class FunkoMapper {
     public FunkoResponseDTO toResponseDTO(Funko funko) {
         if (funko == null) return null;
         return FunkoResponseDTO.builder()
-                .id(funko.getUuid())
+                .id(funko.getId())
+                .uuid(funko.getUuid())
                 .nombre(funko.getNombre())
                 .precio(funko.getPrecio())
                 .categoriaNombre(funko.getCategoria() != null ? funko.getCategoria().getNombre() : null)
@@ -30,13 +30,17 @@ public class FunkoMapper {
                 .build();
     }
 
-    public Funko fromCreateDTO(CreateFunkoDTO dto, Categoria categoria) {
+    public Funko fromCreateDTO(CreateFunkoDTO dto) {
         Funko funko = new Funko();
         funko.setUuid(dto.getUuid());
         funko.setNombre(dto.getNombre());
         funko.setPrecio(dto.getPrecio());
         funko.setFechaLanzamiento(dto.getFechaLanzamiento());
+
+        Categoria categoria = new Categoria();
+        categoria.setNombre(dto.getCategoriaNombre());
         funko.setCategoria(categoria);
+
         return funko;
     }
 
