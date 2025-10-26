@@ -1,5 +1,6 @@
 package dev.adrian.Funko.exception;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.ObjectError;
@@ -34,5 +35,16 @@ public class GlobalExceptionHandler {
         error.put("error", "Error de validación");
         error.put("message", message);
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Map<String, Object>> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", HttpStatus.CONFLICT.value());
+        body.put("message", "Ya existe un registro con el mismo Uuid.");
+        body.put("suggestion", "Verifica que no estés intentando crear un Funko con un UUID ya existente.");
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
     }
 }

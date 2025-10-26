@@ -1,5 +1,7 @@
 package dev.adrian.Funko.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.adrian.Categoria.model.Categoria;
 import dev.adrian.Categoria.repository.CategoriaRepository;
 import dev.adrian.Funko.dto.CreateFunkoDTO;
@@ -14,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,40 +26,38 @@ import java.util.Optional;
 public class FunkoServiceImpl implements FunkoService {
 
     private final FunkoJpaRepository funkoRepository;
+    private final CategoriaRepository categoriaRepository;
     private final FunkoMapper funkoMapper;
     private final FunkoValidator funkoValidator;
-    private final CategoriaRepository categoriaRepository;
+    private final WebSocketService webSocketService;
+    private final ObjectMapper mapper = new ObjectMapper();
 
-    public FunkoServiceImpl(FunkoJpaRepository funkoRepository,
-                            CategoriaRepository categoriaRepository,
-                            FunkoMapper funkoMapper,
-                            FunkoValidator funkoValidator) {
+    public FunkoServiceImpl(
+            FunkoJpaRepository funkoRepository,
+            CategoriaRepository categoriaRepository,
+            FunkoMapper funkoMapper,
+            FunkoValidator funkoValidator,
+            WebSocketService webSocketService
+    ) {
         this.funkoRepository = funkoRepository;
         this.categoriaRepository = categoriaRepository;
         this.funkoMapper = funkoMapper;
         this.funkoValidator = funkoValidator;
+        this.webSocketService = webSocketService;
     }
 
     @Override
     public Optional<Funko> findById(Long id) {
         log.info("findById - Buscando Funko con ID: {}", id);
-
         Funko funko = funkoRepository.findById(id)
-                .orElseThrow(() -> {
-                    log.warn("findById - Funko no encontrado con ID: {}", id);
-                    return new ResourceNotFoundException("Funko no encontrado con ID: " + id);
-                });
-
-        log.info("findById - Funko encontrado: {}", funko.getNombre());
+                .orElseThrow(() -> new ResourceNotFoundException("Funko no encontrado con ID: " + id));
         return Optional.of(funko);
     }
 
     @Override
     public List<Funko> findAll() {
         log.info("findAll - Recuperando todos los Funkos...");
-        List<Funko> funkos = funkoRepository.findAll();
-        log.info("findAll - Total de Funkos encontrados: {}", funkos.size());
-        return funkos;
+        return funkoRepository.findAll();
     }
 
     @Override
@@ -64,33 +65,24 @@ public class FunkoServiceImpl implements FunkoService {
         log.info("saveFromDTO - Creando Funko desde DTO: {}", dto.getNombre());
 
         Categoria categoria = categoriaRepository.findByNombreIgnoreCase(dto.getCategoriaNombre())
-                .orElseThrow(() -> {
-                    log.warn("saveFromDTO - Categoría no encontrada: {}", dto.getCategoriaNombre());
-                    return new ResourceNotFoundException("Categoría no encontrada con nombre: " + dto.getCategoriaNombre());
-                });
-
-        log.info("saveFromDTO - Categoría encontrada: {}", categoria.getNombre());
+                .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada: " + dto.getCategoriaNombre()));
 
         Funko funko = funkoMapper.fromCreateDTO(dto);
-
+        funko.setCategoria(categoria);
         funkoValidator.validate(funko);
-        log.info("saveFromDTO - Validación completada para Funko: {}", funko.getNombre());
 
         Funko saved = funkoRepository.save(funko);
         log.info("saveFromDTO - Funko guardado con ID: {}", saved.getId());
 
+        onChange("CREATE", saved);
         return saved;
     }
 
     @Override
     public Funko updateFromDTO(Long id, UpdateFunkoDTO dto) {
         log.info("updateFromDTO - Actualizando Funko con ID: {}", id);
-
         Funko existing = funkoRepository.findById(id)
-                .orElseThrow(() -> {
-                    log.warn("updateFromDTO - Funko no encontrado: {}", id);
-                    return new ResourceNotFoundException("Funko con ID " + id + " no encontrado");
-                });
+                .orElseThrow(() -> new ResourceNotFoundException("Funko con ID " + id + " no encontrado"));
 
         existing.setNombre(dto.getNombre());
         existing.setPrecio(dto.getPrecio());
@@ -98,47 +90,62 @@ public class FunkoServiceImpl implements FunkoService {
 
         if (dto.getCategoria() != null && dto.getCategoria().getNombre() != null) {
             existing.getCategoria().setNombre(dto.getCategoria().getNombre());
-            log.info("updateFromDTO - Categoría actualizada a: {}", dto.getCategoria().getNombre());
         }
 
         funkoValidator.validate(existing);
-        log.info("updateFromDTO - Validación completada para Funko actualizado");
-
         Funko updated = funkoRepository.save(existing);
-        log.info("updateFromDTO - Funko guardado correctamente con ID: {}", updated.getId());
+        log.info("updateFromDTO - Funko actualizado correctamente con ID: {}", updated.getId());
 
+        onChange("UPDATE", updated);
         return updated;
     }
 
     @Override
     public Funko partialUpdateFromDTO(Long id, PatchFunkoDTO patchFunkoDTO) {
         log.info("partialUpdateFromDTO - Actualización parcial del Funko con ID: {}", id);
-
-        Funko existingFunko = funkoRepository.findById(id)
-                .orElseThrow(() -> {
-                    log.warn("partialUpdateFromDTO - Funko no encontrado con ID: {}", id);
-                    return new RuntimeException("Funko con ID " + id + " no encontrado para actualización parcial.");
-                });
-
-        funkoMapper.fromPatchDTO(patchFunkoDTO, existingFunko);
-        log.info("partialUpdateFromDTO - Campos aplicados desde Patch DTO");
-
-        Funko updated = funkoRepository.save(existingFunko);
-        log.info("partialUpdateFromDTO - Funko parcialmente actualizado con ID: {}", updated.getId());
-
+        Funko existing = funkoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Funko con ID " + id + " no encontrado"));
+        funkoMapper.fromPatchDTO(patchFunkoDTO, existing);
+        Funko updated = funkoRepository.save(existing);
+        onChange("UPDATE_PARTIAL", updated);
         return updated;
     }
 
     @Override
     public void deleteById(Long id) {
         log.info("deleteById - Intentando eliminar Funko con ID: {}", id);
-
         Optional<Funko> funkoOpt = funkoRepository.findById(id);
         if (funkoOpt.isPresent()) {
             funkoRepository.deleteById(id);
+            onChange("DELETE", funkoOpt.get());
             log.info("deleteById - Funko eliminado con éxito: {}", id);
         } else {
-            log.warn("deleteById - No se encontró Funko con ID: {}", id);
+            throw new ResourceNotFoundException("Funko no encontrado con ID: " + id);
+        }
+    }
+
+    private void onChange(String tipo, Funko funko) {
+        log.debug("WebSocket - Notificación tipo: {} para Funko: {}", tipo, funko.getNombre());
+        try {
+            var notificacion = new Notificacion<>(
+                    "FUNKOS",
+                    tipo,
+                    funkoMapper.toResponseDTO(funko),
+                    LocalDateTime.now().toString()
+            );
+
+            String json = mapper.writeValueAsString(notificacion);
+
+            new Thread(() -> {
+                try {
+                    webSocketService.sendMessage(json);
+                } catch (Exception e) {
+                    log.error("Error al enviar mensaje por WebSocket", e);
+                }
+            }).start();
+
+        } catch (JsonProcessingException e) {
+            log.error("Error al convertir notificación a JSON", e);
         }
     }
 }
