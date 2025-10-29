@@ -14,6 +14,8 @@ import dev.adrian.Funko.repository.FunkoJpaRepository;
 import dev.adrian.Funko.validation.FunkoValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.data.domain.Page; // Importante
+import org.springframework.data.domain.Pageable; // Importante
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -32,19 +34,17 @@ public class FunkoServiceImpl implements FunkoService {
     private final WebSocketService webSocketService;
     private final ObjectMapper mapper = new ObjectMapper();
 
-    public FunkoServiceImpl(
-            FunkoJpaRepository funkoRepository,
-            CategoriaRepository categoriaRepository,
-            FunkoMapper funkoMapper,
-            FunkoValidator funkoValidator,
-            WebSocketService webSocketService
-    ) {
+    // ... constructor ...
+
+    public FunkoServiceImpl(FunkoJpaRepository funkoRepository, CategoriaRepository categoriaRepository, FunkoMapper funkoMapper, FunkoValidator funkoValidator, WebSocketService webSocketService) {
         this.funkoRepository = funkoRepository;
         this.categoriaRepository = categoriaRepository;
         this.funkoMapper = funkoMapper;
         this.funkoValidator = funkoValidator;
         this.webSocketService = webSocketService;
     }
+
+
 
     @Override
     public Optional<Funko> findById(Long id) {
@@ -60,6 +60,20 @@ public class FunkoServiceImpl implements FunkoService {
         return funkoRepository.findAll();
     }
 
+    // Nuevo método implementado
+    @Override
+    public Page<Funko> findAll(Pageable pageable, String nameFilter) {
+        log.info("findAll - Recuperando Funkos con paginación y filtro (nombre: {}).", nameFilter != null ? nameFilter : "ninguno");
+        if (nameFilter != null && !nameFilter.trim().isEmpty()) {
+            // Si hay un filtro de nombre, usa el método del repositorio que lo aplica
+            return funkoRepository.findByNombreContainingIgnoreCase(nameFilter, pageable);
+        } else {
+            // Si no hay filtro, devuelve todos con paginación
+            return funkoRepository.findAll(pageable);
+        }
+    }
+
+    // ... resto de métodos ...
     @Override
     public Funko saveFromDTO(CreateFunkoDTO dto) {
         log.info("saveFromDTO - Creando Funko desde DTO: {}", dto.getNombre());
@@ -124,6 +138,7 @@ public class FunkoServiceImpl implements FunkoService {
         }
     }
 
+    // ... método onChange ...
     private void onChange(String tipo, Funko funko) {
         log.debug("WebSocket - Notificación tipo: {} para Funko: {}", tipo, funko.getNombre());
         try {

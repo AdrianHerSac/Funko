@@ -26,7 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 /**
- * ✅ Test unitario del servicio FunkoServiceImpl
+ * Test unitario del servicio FunkoServiceImpl
  * Usa Mockito para simular el repositorio, mapper y validador sin tocar la base de datos real.
  */
 @ExtendWith(MockitoExtension.class)
@@ -79,8 +79,6 @@ class FunkoServiceImplTest {
         patchFunkoDTO.setPrecio(32.50);
     }
 
-    // --- TESTS INDIVIDUALES ---
-
     @Test
     void findById_ExistId() {
         // Simulamos que el repositorio devuelve un Funko cuando se busca por ID
@@ -118,12 +116,12 @@ class FunkoServiceImplTest {
 
     @Test
     void saveFromDTO_CreateFunko() {
-        // ✅ Simulamos la categoría existente
+        // Simulamos la categoría existente
         Categoria categoria = new Categoria(1L, "ANIME");
         when(categoriaRepository.findByNombreIgnoreCase("ANIME"))
                 .thenReturn(Optional.of(categoria));
 
-        // ✅ Simulamos el mapper
+        // Simulamos el mapper
         when(funkoMapper.fromCreateDTO(any(CreateFunkoDTO.class))).thenAnswer(invocation -> {
             CreateFunkoDTO dto = invocation.getArgument(0);
             Funko f = new Funko();
@@ -135,20 +133,19 @@ class FunkoServiceImplTest {
             return f;
         });
 
-        // ✅ El validador no hace nada (evitamos lógica real)
+        // El validador no hace nada (evitamos lógica real)
         doNothing().when(funkoValidator).validate(any(Funko.class));
 
-        // ✅ Simulamos que la BD asigna un ID al guardar
+        // Simulamos que la BD asigna un ID al guardar
         when(funkoRepository.save(any(Funko.class))).thenAnswer(invocation -> {
             Funko savedFunko = invocation.getArgument(0);
             savedFunko.setId(1L);
             return savedFunko;
         });
 
-        // ✅ Ejecutamos el método real
         Funko savedFunko = funkoService.saveFromDTO(createFunkoDTO);
 
-        // ✅ Verificaciones
+        // Verificaciones
         assertNotNull(savedFunko.getId());
         assertEquals("Goku Ultra Instinto", savedFunko.getNombre());
         assertEquals(35.50, savedFunko.getPrecio());
@@ -195,7 +192,7 @@ class FunkoServiceImplTest {
     }
 
     @Test
-    void deleteById_ExistingId_ShouldDelete() {
+    void deleteById_ExistingId() {
         when(funkoRepository.findById(1L)).thenReturn(Optional.of(funkoExample));
 
         funkoService.deleteById(1L);
@@ -204,12 +201,13 @@ class FunkoServiceImplTest {
     }
 
     @Test
-    void deleteById_NonExistingId_ShouldNotThrowButDoNothing() {
+    void deleteById_NonExistingId() {
         when(funkoRepository.findById(999L)).thenReturn(Optional.empty());
 
-        funkoService.deleteById(999L);
+        assertThrows(ResourceNotFoundException.class, () -> {
+            funkoService.deleteById(999L);
+        });
 
-        verify(funkoRepository, times(1)).findById(999L);
-        verify(funkoRepository, never()).deleteById(999L);
+        verify(funkoRepository, never()).deleteById(anyLong());
     }
 }

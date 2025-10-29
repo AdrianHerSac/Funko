@@ -36,8 +36,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation ("org.springframework.boot:spring-boot-starter-websocket")
 
+    //lombook
     compileOnly("org.projectlombok:lombok")
-
     annotationProcessor("org.projectlombok:lombok")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -45,8 +45,11 @@ dependencies {
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
+    // Formato XML
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
+
     testImplementation("org.testcontainers:junit-jupiter:1.19.0")
-    testImplementation("org.testcontainers:mysql:1.19.0") // o postgresql según tu contenedor
+    testImplementation("org.testcontainers:mysql:1.19.0")
     testImplementation("mysql:mysql-connector-java:8.0.33")
     testImplementation("org.testcontainers:postgresql")
 }

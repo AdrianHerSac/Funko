@@ -27,12 +27,12 @@ public class FunkoValidator {
                     HttpStatus.BAD_REQUEST, "La categoría no puede estar vacía");
         }
 
-        if (funko.getPrecio() == null || funko.getPrecio() < 0) {
+        if (funko.getPrecio() < 0) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "El precio no puede ser negativo ni nulo");
         }
 
-        if (funko.getUuid() == null || funko.getUuid() < 0) {
+        if (funko.getUuid() < 0) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "El precio no puede ser negativo ni nulo");
         }

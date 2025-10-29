@@ -23,16 +23,15 @@ public class Funko {
 
     @NotNull(message = "El uuid no puede ser nulo")
     @Column(name = "uuid", nullable = false, unique = true)
-    private Long uuid;
+    private long uuid;
 
     @NotBlank(message = "El nombre no puede estar vacío")
     @Column(name = "nombre", nullable = false)
     private String nombre;
 
-    @NotNull(message = "El precio no puede ser nulo")
     @PositiveOrZero(message = "El precio no puede ser negativo")
     @Column(name = "precio", nullable = false)
-    private Double precio;
+    private double precio;
 
     @NotNull(message = "La categoría no puede ser nula")
     @ManyToOne(optional = false)
@@ -43,7 +42,3 @@ public class Funko {
     @Column(name = "fecha_lanzamiento", nullable = false)
     private LocalDate fechaLanzamiento;
 }
-
-// repositorio de categoria
-// Actualizar un nombre de la categoria actualiza
-// Puedes crear una categoria que ya esta creado

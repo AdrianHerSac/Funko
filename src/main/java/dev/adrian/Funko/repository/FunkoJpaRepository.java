@@ -1,6 +1,8 @@
 package dev.adrian.Funko.repository;
 
 import dev.adrian.Funko.model.Funko;
+import org.springframework.data.domain.Page; // Importante
+import org.springframework.data.domain.Pageable; // Importante
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,4 +16,6 @@ public interface FunkoJpaRepository extends JpaRepository<Funko, Long> {
     List<Funko> findByPrecioLessThanEqual(Double precioMax);
 
     List<Funko> findByCategoriaId(Long id);
+
+    Page<Funko> findByNombreContainingIgnoreCase(String nombre, Pageable pageable);
 }

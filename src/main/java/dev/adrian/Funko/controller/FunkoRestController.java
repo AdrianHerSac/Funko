@@ -9,11 +9,13 @@ import dev.adrian.Funko.model.Funko;
 import dev.adrian.Funko.service.FunkoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page; // Importante
+import org.springframework.data.domain.PageRequest; // Importante
+import org.springframework.data.domain.Pageable; // Importante
+import org.springframework.data.domain.Sort; // Importante
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,17 +23,32 @@ import java.util.List;
 public class FunkoRestController {
 
     private final FunkoService funkoService;
-
     private final FunkoMapper funkoMapper;
 
+    // Modificado para paginación, ordenación y filtrado
     @GetMapping(value = {"", "/"})
-    public ResponseEntity<List<FunkoResponseDTO>> getAllFunkos() {
-        return ResponseEntity.ok(
-                funkoService.findAll().stream()
-                        .map(funkoMapper::toResponseDTO)
-                        .toList()
-        );
+    public ResponseEntity<Page<FunkoResponseDTO>> getAllFunkos(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam(required = false) String name // Parámetro de filtrado
+    ) {
+        Sort.Direction direction = Sort.Direction.ASC;
+        if ("desc".equalsIgnoreCase(sortDir)) {
+            direction = Sort.Direction.DESC;
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+
+        Page<Funko> funkoPage = funkoService.findAll(pageable, name);
+
+        Page<FunkoResponseDTO> responsePage = funkoPage.map(funkoMapper::toResponseDTO);
+
+        return ResponseEntity.ok(responsePage);
     }
+
+    // ... Resto de métodos siguen igual ...
 
     @GetMapping("/{id}")
     public ResponseEntity<FunkoResponseDTO> getFunko(@PathVariable Long id) {
@@ -41,7 +58,6 @@ public class FunkoRestController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // PostMapping para el post, el Put no funciona ☻
     @PostMapping(value = {"", "/"})
     public ResponseEntity<FunkoResponseDTO> createFunko(@Valid @RequestBody CreateFunkoDTO dto) {
         Funko funko = funkoService.saveFromDTO(dto);
@@ -49,24 +65,21 @@ public class FunkoRestController {
                 .body(funkoMapper.toResponseDTO(funko));
     }
 
-
     @PutMapping("/{id}")
-    public ResponseEntity<Funko> updateFunko(
+    public ResponseEntity<FunkoResponseDTO> updateFunko(
             @PathVariable Long id,
             @RequestBody UpdateFunkoDTO dto) {
-
         Funko updated = funkoService.updateFromDTO(id, dto);
-        return ResponseEntity.ok(updated);
+        return ResponseEntity.ok(funkoMapper.toResponseDTO(updated)); // Mapeamos a DTO
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Funko> patchFunko(
+    public ResponseEntity<FunkoResponseDTO> patchFunko(
             @PathVariable Long id,
             @Valid @RequestBody PatchFunkoDTO patchFunkoDTO) {
-
         try {
             Funko patchedFunko = funkoService.partialUpdateFromDTO(id, patchFunkoDTO);
-            return ResponseEntity.ok(patchedFunko);
+            return ResponseEntity.ok(funkoMapper.toResponseDTO(patchedFunko)); // Mapeamos a DTO
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
